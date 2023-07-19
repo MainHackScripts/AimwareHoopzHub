@@ -166,6 +166,16 @@ local Toggle = MainTab:CreateToggle({
    end,
 })
 
+local Toggle = MainTab:CreateToggle({
+   Name = "Range Detector",
+   CurrentValue = false,
+   Flag = "ReachFlag", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+       
+})
+   end,
+
+
 
 
 
