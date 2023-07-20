@@ -22,7 +22,7 @@ local Window = Rayfield:CreateWindow({
       FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
       SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
       GrabKeyFromSite = true, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
-      Key = {"https://[Log in to view URL]"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+      Key = {"https://raw.githubusercontent.com/MainHackScripts/HoopzKeySystem/main/.lua"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
    }
 })
 
@@ -132,7 +132,385 @@ local Button = MainTab:CreateButton({
    end,
 })
 
-local Slider = MainTab:CreateSlider({
+local Toggle = MainTab:CreateToggle({
+   Name = "Reach",
+   CurrentValue = false,
+   Flag = "ReachFlag", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+       _G.ReachPlayer = Value 
+
+        function getNearestPart(torso)
+    local dist, part = 9e9
+    for i,v in pairs(game:GetService("Players").LocalPlayer.Character:GetChildren()) do
+       if v:IsA("Part") and torso then
+           local mag = (v.Position - torso.Position).Magnitude
+           if dist > mag then
+               dist = mag
+               part = v
+           end
+        end
+        end
+        return part
+        end
+
+
+
+        function findClosestPlayerWithBall()
+        local closestPlayerWithBasketball = nil
+        local closestDistance = math.huge
+        for i,v in pairs(game:GetService("Players"):GetChildren()) do
+        if v.Name ~= game:GetService("Players").LocalPlayer.Name and v.Character:FindFirstChildOfClass("Tool") then
+        local distance = (game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).magnitude
+                if distance < closestDistance then
+                closestDistance = distance
+                closestPlayerWithBasketball = v
+                end
+            end
+        end
+        return closestPlayerWithBasketball
+        end
+
+        spawn(function()
+        local RunService = game:GetService("RunService")
+        RunService.RenderStepped:Connect(function()
+        if _G.ReachPlayer and not game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool") and (game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position - findClosestPlayerWithBall().Character.HumanoidRootPart.Position).magnitude <= 10 then
+        firetouchinterest(getNearestPart(findClosestPlayerWithBall().Character.Torso), findClosestPlayerWithBall().Character.Basketball.Ball, 0)
+        firetouchinterest(getNearestPart(findClosestPlayerWithBall().Character.Torso), findClosestPlayerWithBall().Character.Basketball.Ball, 1)
+        end
+        end)
+        end)
+        
+        if Value == false then 
+            Rayfield:Notify({
+        Title = "Reach Turned Off",
+        Content = "Aimware's Hoopz",
+        Duration = 1,
+        Image = 4483362458,
+        Actions = { -- Notification Buttons
+      Ignore = {
+         Name = "Okay",
+         Callback = function()
+         print("The user tapped Okay!")
+      end
+        }, 
+        },
+        })
+        end 
+        
+        if Value == true then 
+            Rayfield:Notify({
+        Title = "Reach Turned On",
+        Content = "Aimware's Hoopz",
+        Duration = 1,
+        Image = 4483362458,
+        Actions = { -- Notification Buttons
+      Ignore = {
+         Name = "Okay",
+         Callback = function()
+         print("The user tapped Okay!")
+      end
+        }, 
+        },
+        })
+        end 
+        
+        
+   end,
+})
+
+
+
+local Toggle = MainTab:CreateToggle({
+   Name = "Anti Travel",
+   CurrentValue = false,
+   Flag = "AntiTravelFlag", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+       local mt = getrawmetatable(game)
+	    local namecall = mt.__namecall
+	    setreadonly(mt,false)
+	    mt.__namecall = function(self,...)
+		local args = {...}
+		local method = getnamecallmethod()
+
+		if tostring(self) == "shootingEvent" and method == "FireServer" and args[1] == "xd" then
+		    if Value == false then
+			args[1] = "xd"
+			return self.FireServer(self, unpack(args))
+		    elseif Value == true then
+		    return;
+			end
+		end
+		return namecall(self,...)
+	    end
+	    
+	    if Value == true then
+        Rayfield:Notify({
+        Title = "Anti Travel On",
+        Content = "Aimware's Hoopz",
+        Duration = 1,
+        Image = 4483362458,
+        Actions = { -- Notification Buttons
+      Ignore = {
+         Name = "Okay",
+         Callback = function()
+         print("The user tapped Okay!")
+      end
+        },
+        },
+        })
+	    end
+	    
+	    if Value == false then 
+            Rayfield:Notify({
+        Title = "Anti Travel Off",
+        Content = "Aimware's Hoopz",
+        Duration = 1,
+        Image = 4483362458,
+        Actions = { -- Notification Buttons
+      Ignore = {
+         Name = "Okay",
+         Callback = function()
+         print("The user tapped Okay!")
+      end
+        }, 
+        },
+        })
+        end 
+	    
+   end,
+})
+
+
+local Toggle = MainTab:CreateToggle({
+   Name = "Auto Dunk",
+   CurrentValue = false,
+   Flag = "AutoDunkFlag", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+       _G.autoDunk = Value
+
+        function getCourt()
+        local closestDistance = math.huge
+        local closestCourt = nil
+        for i,v in pairs(game:GetService("Workspace").Courts:GetDescendants()) do
+        if v.Name == "CourtFloor" then
+        local distance = (game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position - v.Position).magnitude
+        if distance < closestDistance then
+            closestDistance = distance
+            closestCourt = v
+        end
+        end
+        end
+        return closestCourt.Parent.Parent.Parent
+        end
+
+
+        function getClosest()
+        local closestDistance = math.huge
+        local closestRim = nil
+        for i,v in pairs(game:GetService("Workspace").Courts:GetDescendants()) do
+        if v.Name == "hoop" then
+        local distance = (game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position - v.Position).magnitude
+        if distance < closestDistance then
+            closestDistance = distance
+            closestRim = v
+        end
+        end
+        end
+        return closestRim
+        end
+
+
+
+        function returnDunkDistance()
+        local dunkDistance = (game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position - getClosest().Position).magnitude
+        return dunkDistance   
+        end
+
+        spawn(function()
+        while _G.autoDunk do
+        wait()
+        if returnDunkDistance() <= 28 then
+        local args = {
+        [1] = game:GetService("Players").LocalPlayer.Character:WaitForChild("Basketball")
+        }
+
+        getCourt().FieldGoal.dunkFunction:InvokeServer(unpack(args))
+        if _G.autoDunk == false then return end
+        end
+        end
+        end)
+        
+        if Value == true then
+        Rayfield:Notify({
+        Title = "Auto Dunk On",
+        Content = "Aimware's Hoopz",
+        Duration = 1,
+        Image = 4483362458,
+        Actions = { -- Notification Buttons
+      Ignore = {
+         Name = "Okay",
+         Callback = function()
+         print("The user tapped Okay!")
+      end
+        },
+        },
+        })
+    
+        if Value == false then 
+            Rayfield:Notify({
+        Title = "Auto Dunk Off",
+        Content = "Aimware's Hoopz",
+        Duration = 1,
+        Image = 4483362458,
+        Actions = { -- Notification Buttons
+      Ignore = {
+         Name = "Okay",
+         Callback = function()
+         print("The user tapped Okay!")
+      end
+        }, 
+        },
+        })
+        end
+        end
+end, 
+})
+
+
+
+
+
+
+                                 -- Animations
+
+local AnimationTab = Window:CreateTab("🕺Animations", nil) -- Title, Image
+local Section = AnimationTab:CreateSection("Intros")
+
+local Dropdown = AnimationTab:CreateDropdown({
+   Name = "Animations",
+   Options = {"Intro_AnthonyShuffle_L","Intro_Backstand_U", "Intro_BillieJean_C", "Intro_Boo!_L", "Intro_BringItOn_U", "Intro_CaramellaDance_C", "Intro_ChronoSteps_R", "Intro_Clap_C", "Intro_ComeOn_R", "Intro_CleanGroove_C", "Intro_Crabby_E", "Intro_Cradles_L", "Intro_CrissCross_R", "Intro_CutePose_C", "Intro_Dab2_U", "Intro_Dab_C", "Intro_Dirty_R", "Intro_Default", "Intro_DefaultDance_U", "Intro_Distraction_E", "Intro_ElectroShuffle_L", "Intro_ElectroSwing_U", "Intro_Dribble_R", "Intro_FlapperDance_U", "Intro_FrameSkin_R", "Intro_Freestyle_R", "Intro_GetDown_U", "Intro_GoBanana_E", "Intro_HandShuffle_R", "Intro_Hate_C", "Intro_Handstand_C", "Intro_Headflips_E", "Intro_Hiphop_L", "Intro_Headless_C", "Intro_JojoGang_E", "Intro_JumpingJacks_R", "Intro_Kickflip_E", "Intro_LDance_U", "Intro_Lavish_R", "Intro_LeapingDance_C", "Intro_LegShake_U", "Intro_Levitate_L", "Intro_MarioOdyssey_R", "Intro_MickyJacky_E", "Intro_Mood_L", "Intro_NaeNae_L", "Intro_OrangeJustice_L", "Intro_NanaDance_C", "Intro_Roasted_U", "Intro_ScoutKick_C", "Intro_Poop_E", "Intro_PraiseTheLord_R", "Intro_Reanimated_L", "Intro_Reanimated_L", "Intro_Shake&Clap_E", "Intro_Separate_U", "Intro_ShakeItUp_U", "Intro_ShowOff_U", "Intro_ShuffleV2_E", "Intro_Shuffle_E", "Intro_SideHustle_R", "Intro_Sit&Sway_C", "Intro_SlapDisrespect_U", "Intro_Sit_C", "Intro_Slick_E","Intro_Smeeze_E","Intro_Springy_R","Intro_SmugDance_U","Intro_Swipe_R","Intro_Thriller_R","Intro_TrashCompacter_U","Intro_Wave_C","Intro_WhipIt_E","Intro_Wiggle_C","Intro_Zany_R"}, 
+   CurrentOption = {nil},
+   MultipleOptions = false,
+   Flag = "Dropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Option)
+       game:GetService("Players").LocalPlayer.Equipping.Intro.Value = Option 
+   end,
+})
+
+local Section = AnimationTab:CreateSection("Dunks")
+local Dropdown = AnimationTab:CreateDropdown({
+   Name = "Dropdown Example",
+   Options = {"Dunk_1HClutchReverse_L","Dunk_2HWindmill_U","Dunk_360BTL_R","Dunk_360Scoop_E","Dunk_360MailMan_L","Dunk_360Pump_E","Dunk_360Windmill_Special","Dunk_360_R","Dunk_BTB2HReverse_E","Dunk_BTBScorpion_E","Dunk_BTB_U","Dunk_BTLReverse2H_Special","Dunk_BTLBTB_E","Dunk_Backscratcher_C","Dunk_BTL_R","Dunk_Cradle_E","Dunk_CuffCradle_E","Dunk_Default","Dunk_DoubleBTL_E","Dunk_FakeBTB_Special","Dunk_FakeBTL_Special","Dunk_FrontClutch_C","Dunk_Inverter_Special","Dunk_LostAndFound_Special","Dunk_MJ_L","Dunk_MailMan_U","Dunk_PumpReverse_R","Dunk_Pendulum_R","Dunk_Reverse2HWindmill_U","Dunk_Reverse360BTB2H_Special","Dunk_Reverse360BTL_E","Dunk_Reverse360BTB_E","Dunk_Scorpion2_R","Dunk_Reverse_C","Dunk_Scorpion_R","Dunk_Switcheroo_C","Dunk_UberTomahawk_U","Dunk_Tomahawk_C","Dunk_UnderTheLegs_R","Dunk_VinceCarter360_E","Dunk_Windmill_U"},
+   CurrentOption = {nil},
+   MultipleOptions = false,
+   Flag = "Dropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Option)
+        game:GetService("Players").LocalPlayer.Equipping.Dunk.Value = Option
+        game:GetService("Players").LocalPlayer.Equipping.Dunk2.Value = Option
+        game:GetService("Players").LocalPlayer.Equipping.Dunk3.Value = Option 
+   end,
+})
+
+
+                               -- Servers
+
+local ServerTab = Window:CreateTab("Servers", 4483362458) -- Title, Image
+local Section = ServerTab:CreateSection("Intros")
+
+local Button = MiscellaneousTab:CreateButton({
+   Name = "Rejoin",
+   Callback = function()
+       repeat
+wait()  
+until game:IsLoaded() 
+game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId,game.JobId) 
+   end,
+})
+
+local Button = ServerTab:CreateButton({
+   Name = "Server Hop",
+   Callback = function()
+       local PlaceID = game.PlaceId
+        local AllIDs = {}
+        local foundAnything = ""
+        local actualHour = os.date("!*t").hour
+        local Deleted = false
+        local File = pcall(function()
+        AllIDs = game:GetService('HttpService'):JSONDecode(readfile("NotSameServers.json"))
+        end)
+        if not File then
+        table.insert(AllIDs, actualHour)
+        writefile("NotSameServers.json", game:GetService('HttpService'):JSONEncode(AllIDs))
+        end
+        function TPReturner()
+        local Site;
+        if foundAnything == "" then
+        Site = game.HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. PlaceID .. '/servers/Public?sortOrder=Asc&limit=100'))
+        else
+        Site = game.HttpService:JSONDecode(game:HttpGet('https://games.roblox.com/v1/games/' .. PlaceID .. '/servers/Public?sortOrder=Asc&limit=100&cursor=' .. foundAnything))
+         end
+        local ID = ""
+        if Site.nextPageCursor and Site.nextPageCursor ~= "null" and Site.nextPageCursor ~= nil then
+        foundAnything = Site.nextPageCursor
+        end
+        local num = 0;
+        for i,v in pairs(Site.data) do
+        local Possible = true
+        ID = tostring(v.id)
+        if tonumber(v.maxPlayers) > tonumber(v.playing) then
+            for _,Existing in pairs(AllIDs) do
+                if num ~= 0 then
+                    if ID == tostring(Existing) then
+                        Possible = false
+                    end
+                else
+                    if tonumber(actualHour) ~= tonumber(Existing) then
+                        local delFile = pcall(function()
+                            delfile("NotSameServers.json")
+                            AllIDs = {}
+                            table.insert(AllIDs, actualHour)
+                        end)
+                    end
+                end
+                num = num + 1
+            end
+            if Possible == true then
+                table.insert(AllIDs, ID)
+                wait()
+                pcall(function()
+                    writefile("NotSameServers.json", game:GetService('HttpService'):JSONEncode(AllIDs))
+                    wait()
+                    game:GetService("TeleportService"):TeleportToPlaceInstance(PlaceID, ID, game.Players.LocalPlayer)
+                end)
+                wait(4)
+                end
+            end
+        end
+        end
+
+        function Teleport()
+        while wait() do
+        pcall(function()
+            TPReturner()
+            if foundAnything ~= "" then
+                TPReturner()
+            end
+        end)
+        end
+        end
+
+        Teleport()
+   end,
+})
+
+
+                                        -- Player
+
+
+local PlayerTab = Window:CreateTab("Player", 4483362458) -- Title, Image
+local Section = PlayerTab:CreateSection("Features")
+
+local Slider = PlayerTab:CreateSlider({
    Name = "WalkSpeed",
    Range = {16, 19},
    Increment = 0.1,
@@ -144,63 +522,23 @@ local Slider = MainTab:CreateSlider({
    end,
 })
 
-local Toggle = MainTab:CreateToggle({
-   Name = "Reach",
-   CurrentValue = false,
-   Flag = "ReachFlag", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+
+local Slider = PlayerTab:CreateSlider({
+   Name = "Jump Power",
+   Range = {50, 60},
+   Increment = 1,
+   Suffix = "JumpPower",
+   CurrentValue = 50,
+   Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
    Callback = function(Value)
-       Rayfield:Notify({
-   Title = "Under Developement!",
-   Content = "Reach is currently being worked on",
-   Duration = 3,
-   Image = 4483362458,
-   Actions = { -- Notification Buttons
-      Ignore = {
-         Name = "Okay",
-         Callback = function()
-         print("The user tapped Okay!")
-      end
-   },
-},
-})
+       game.Players.LocalPlayer.Character.Humanoid.JumpPower = (Value)
    end,
 })
 
 
-local AnimationTab = Window:CreateTab("🕺Animations", nil) -- Title, Image
-local Section = AnimationTab:CreateSection("Intros")
-
-local Dropdown = AnimationTab:CreateDropdown({
-   Name = "Animations",
-   Options = {"Intro_AnthonyShuffle_L","Intro_Backstand_U", "Intro_BillieJean_C", "Intro_Boo!_L", "Intro_BringItOn_U", "Intro_CaramellaDance_C", "Intro_ChronoSteps_R", "Intro_Clap_C", "Intro_ComeOn_R", "Intro_CleanGroove_C", "Intro_Crabby_E", "Intro_Cradles_L", "Intro_CrissCross_R", "Intro_CutePose_C", "Intro_Dab2_U", "Intro_Dab_C", "Intro_Dirty_R", "Intro_Default", "Intro_DefaultDance_U", "Intro_Distraction_E", "Intro_ElectroShuffle_L", "Intro_ElectroSwing_U", "Intro_Dribble_R", "Intro_FlapperDance_U", "Intro_FrameSkin_R", "Intro_Freestyle_R", "Intro_GetDown_U", "Intro_GoBanana_E", "Intro_HandShuffle_R", "Intro_Hate_C", "Intro_Handstand_C", "Intro_Headflips_E", "Intro_Hiphop_L", "Intro_Headless_C", "Intro_JojoGang_E", "Intro_JumpingJacks_R", "Intro_Kickflip_E", "Intro_LDance_U", "Intro_Lavish_R", "Intro_LeapingDance_C", "Intro_LegShake_U", "Intro_Levitate_L", "Intro_MarioOdyssey_R", "Intro_MickyJacky_E", "Intro_Mood_L", "Intro_NaeNae_L", "Intro_OrangeJustice_L", "Intro_NanaDance_C", "Intro_Roasted_U", "Intro_ScoutKick_C", "Intro_Poop_E", "Intro_PraiseTheLord_R", "Intro_Reanimated_L", "Intro_Reanimated_L", "Intro_Shake&Clap_E", "Intro_Separate_U", "Intro_ShakeItUp_U", "Intro_ShowOff_U", "Intro_ShuffleV2_E", "Intro_Shuffle_E", "Intro_SideHustle_R", "Intro_Sit&Sway_C", "Intro_SlapDisrespect_U", "Intro_Sit_C", "Intro_Slick_E","Intro_Smeeze_E","Intro_Springy_R","Intro_SmugDance_U","Intro_Swipe_R","Intro_Thriller_R","Intro_TrashCompacter_U","Intro_Wave_C","Intro_WhipIt_E","Intro_Wiggle_C","Intro_Zany_R"}, 
-   CurrentOption = {"Option 1"},
-   MultipleOptions = false,
-   Flag = "Dropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(Option)
-       game:GetService("Players").LocalPlayer.Equipping.Intro.Value = Option 
+local Button = PlayerTab:CreateButton({
+   Name = "Reset",
+   Callback = function()
+       game:GetService("Players").LocalPlayer.Character.Humanoid.Health = 0
    end,
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
