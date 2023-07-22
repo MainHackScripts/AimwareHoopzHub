@@ -670,12 +670,12 @@ local Dropdown = AnimationTab:CreateDropdown({
 })
 
 
-                               -- Servers
+                               -- Servers -- 
 
 local ServerTab = Window:CreateTab("Servers", 4483362458) -- Title, Image
 local Section = ServerTab:CreateSection("Server Options")
 
-local Button = ServerTabTab:CreateButton({
+local Button = ServerTab:CreateButton({
    Name = "Rejoin",
    Callback = function()
        repeat
