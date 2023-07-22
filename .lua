@@ -413,9 +413,6 @@ spawn(function()
 if _G.aimToggle == false then
 game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("AimbotGui"):Destroy()
 for i,v in pairs(game:GetService("Players").LocalPlayer.PlayerGui:GetChildren()) do
-    if v.Name == "AimbotGui" then
-        v:Destroy()
-    end
 end
 elseif _G.aimToggle == true then
     
@@ -1279,3 +1276,4 @@ local Button = PlayerTab:CreateButton({
        game:GetService("Players").LocalPlayer.Character.Humanoid.Health = 0
    end,
 })
+
