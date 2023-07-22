@@ -45,6 +45,365 @@ Rayfield:Notify({
 })
 
 local Toggle = MainTab:CreateToggle({
+   Name = "Aimbot V2",
+   CurrentValue = false,
+   Flag = "AimbotV2Flag", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+       _G.silentAim = Value 
+       spawn(function()
+    local plr = game.Players.LocalPlayer
+local uis = game:GetService("UserInputService")
+
+local shootingEvent = game:GetService("ReplicatedStorage").shootingEvent
+ 
+if workspace:FindFirstChild("PracticeArea") then
+    workspace.PracticeArea.Parent = workspace.Courts
+end
+
+function power()
+    return plr.Power
+end
+ 
+function changePower(goal)
+    power().Value = goal
+end
+
+function added(v)
+    if v.Name == "Basketball" then
+        task.wait(0.5)
+        hasBall = true
+    end
+end
+ 
+function removed(v)
+    if v.Name == "Basketball" then
+        hasBall = false
+    end
+end
+ 
+local jumping = false
+ 
+for i,v in pairs(getconnections(game:GetService("UserInputService").TouchTapInWorld)) do
+    for z,x in pairs(getupvalues(v.Function)) do
+        if type(x) == "table" and rawget(x, 1) then
+            _G.method = x
+        elseif z == 10 then
+            _G.key = x
+        end
+    end
+end
+
+shootingEvent.OnClientEvent:Connect(function(newKey)
+    _G.key = newKey
+end)
+ 
+function setup()
+    local dist, goal = 9e9, nil
+    for i,v in pairs(workspace.Courts:GetDescendants()) do
+        if v.Name == "Swish" and v:IsA("Sound") and plr.Character and plr.Character:FindFirstChild("Torso") then
+            local mag = (plr.Character.Torso.Position - v.Parent.Position).Magnitude
+            if dist > mag then
+                dist = mag; goal = v.Parent
+            end
+        end
+    end
+    return dist, goal
+end
+ 
+function power()
+    return plr.Power
+end
+
+function table(a, b)
+    local args = {
+X1 = a.X,
+Y1 = a.Y,
+Z1 = a.Z,
+X2 = b.X,
+Y2 = b.Y,
+Z2 = b.Z
+};
+ 
+return {args[_G.method[1]], args[_G.method[2]], args[_G.method[3]], args[_G.method[4]], args[_G.method[5]], args[_G.method[6]]}
+end
+ 
+function arc()
+    local dist, goal = setup()
+ 
+    dist = math.floor(dist)
+    if dist == 12 or dist == 13 then
+        return 15
+    elseif dist == 14 or dist == 15 then
+        return 20
+    elseif dist == 16 or dist == 17 then
+        return 15
+    elseif dist == 18 then
+        return 25
+    elseif dist == 19 then
+        return 20
+    elseif dist == 20 or dist == 21 then
+        return 20
+    elseif dist == 22 or dist == 23 then
+        return 25
+    elseif dist == 24 or dist == 25 then
+        return 20
+    elseif dist == 26 then
+        return 15
+    elseif dist == 27 or dist == 28 then
+        return 25
+    elseif dist == 29 or dist == 30 then
+        return 20
+    elseif dist == 31 then
+        return 15
+    elseif dist == 32 or dist == 33 then
+        return 30
+    elseif dist == 34 or dist == 35 or dist == 36 then
+        return 25
+    elseif dist == 37 or dist == 38 then
+        return 35
+    elseif dist == 39 or dist == 40 then
+        return 30
+    elseif dist == 41 then
+        return 25
+    elseif dist == 42 or dist == 43 then
+        return 40
+    elseif dist == 44 then
+        return 35
+    elseif dist == 45 or dist == 46 then
+        return 30
+    elseif dist == 47 or dist == 48 then
+        return 45
+    elseif dist == 49 then
+        return 40
+    elseif dist == 50 then
+        return 35
+    elseif dist == 51 then
+        return 50
+    elseif dist == 52 then
+        return 55
+    elseif dist == 53 or dist == 54 then
+        return 50
+    elseif dist == 55 then
+        return 45
+    elseif dist == 56 then
+        return 40
+    elseif dist == 57 or dist == 58 then
+        return 55
+    elseif dist == 59 or dist == 60 or dist == 61 then
+        return 50
+    elseif dist == 62 or dist == 63 then
+        return 65
+    elseif dist == 64 then
+        return 55
+    elseif dist == 65 then
+        return 60
+    elseif dist == 66 or dist == 67 then
+        return 50
+    elseif dist == 68 or dist == 69 then
+        return 75
+    elseif dist == 70 or dist == 71 then
+        return 70
+    elseif dist == 72 then
+        return 65
+    elseif dist == 73 then
+        return 60
+    elseif dist == 74 then
+        return 50
+    elseif jumping then
+        if dist == 9 or dist == 10 then
+            return 20
+        elseif dist == 11 or dist == 12 then
+            return 15
+        end
+    end
+end
+
+function stepped()
+    if plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+        local pwr = power()
+        local dist, goal = setup()
+        local root = plr.Character.HumanoidRootPart
+ 
+        dist = math.floor(dist)
+ 
+        if root and hasBall then
+ 
+            if dist >= 13 and dist <= 16 then
+                changePower(30)
+            elseif dist >= 17 and dist <= 21 then
+                changePower(35)
+            elseif dist >= 22 and dist <= 26 then
+                changePower(40)
+            elseif dist >= 27 and dist <= 31 then
+                changePower(45)
+            elseif dist >= 32 and dist <= 36 then
+                changePower(50)
+            elseif dist >= 37 and dist <= 41 then
+                changePower(55)
+            elseif dist >= 42 and dist <= 46 then
+                changePower(60)
+            elseif dist >= 47 and dist <= 50 then
+                changePower(65)
+            elseif dist >= 51 and dist <= 56 then
+                changePower(70)
+            elseif dist >= 57 and dist <= 61 then
+                changePower(75)
+            elseif dist >= 62 and dist <= 67 then
+                changePower(80)
+            elseif dist >= 68 and dist <= 74 then
+                changePower(85)
+            elseif jumping and dist == 9 or dist == 10 or dist == 11 or dist == 12 then
+                changePower(25)
+            end
+        end
+    end
+end
+
+function stepped2()
+    if plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+        local pwr = power()
+        local dist, goal = setup()
+        local root = plr.Character.HumanoidRootPart
+ 
+        dist = math.floor(dist)
+ 
+        if root and hasBall then
+ 
+            if dist >= 13 and dist <= 16 then
+                changePower(35)
+            elseif dist >= 17 and dist <= 21 then
+                changePower(40)
+            elseif dist >= 22 and dist <= 26 then
+                changePower(45)
+            elseif dist >= 27 and dist <= 31 then
+                changePower(50)
+            elseif dist >= 32 and dist <= 36 then
+                changePower(55)
+            elseif dist >= 37 and dist <= 41 then
+                changePower(60)
+            elseif dist >= 42 and dist <= 46 then
+                changePower(65)
+            elseif dist >= 47 and dist <= 50 then
+                changePower(70)
+            elseif dist >= 51 and dist <= 56 then
+                changePower(75)
+            elseif dist >= 57 and dist <= 61 then
+                changePower(80)
+            elseif dist >= 62 and dist <= 67 then
+            	changePower(85)
+            elseif jumping and dist == 9 or dist == 10 or dist == 11 or dist == 12 then
+                changePower(30)
+            end
+        end
+    end
+end
+
+function shoot()
+    local dist, goal = setup()
+    local pwr = power()
+    local arc = arc()
+ 
+    if arc ~= nil and plr.Character and plr.Character:FindFirstChild("Humanoid") then
+        local args = table(plr.Character.Torso.Position, (goal.Position + Vector3.new(0, arc, 0) - plr.Character.HumanoidRootPart.Position + plr.Character.Humanoid.MoveDirection).Unit)
+ 
+        shootingEvent:FireServer(
+            plr.Character.Basketball,
+            pwr.Value,
+            args,
+            _G.key
+        )
+    end
+end
+
+function shoot2()
+	local dist, goal = setup()
+    local pwr = power()
+    local arc = arc()
+    local dist, goal = setup()
+ 
+    dist = math.floor(dist)
+ 
+    if arc ~= nil and dist <= 67 and plr.Character and plr.Character:FindFirstChild("Humanoid") then
+        local args = table(plr.Character.Torso.Position, (goal.Position + Vector3.new(0, arc, 0) - plr.Character.HumanoidRootPart.Position + plr.Character.Humanoid.MoveDirection).Unit)
+ 
+        shootingEvent:FireServer(
+            plr.Character.Basketball,
+            pwr.Value,
+            args,
+            _G.key
+        )
+    end
+end
+
+function jumped()
+    if plr.Character and hasBall and plr.Character:FindFirstChild("HumanoidRootPart") and _G.silentAim then
+        jumping = true
+        stepped()
+        task.wait(0.325)
+        shoot()
+        task.wait(0.1)
+        jumping = false
+    end
+end
+
+
+uis.InputBegan:Connect(function(inp)
+	if inp.KeyCode == Enum.KeyCode.X then
+		stepped2()
+		task.wait(0.005)
+		shoot2()
+	end
+end)
+
+plr.Character.ChildAdded:Connect(added)
+plr.Character.ChildRemoved:Connect(removed)
+plr.Character.Humanoid.Jumping:Connect(jumped)
+       end)
+
+    if Value == true then 
+            Rayfield:Notify({
+        Title = "Aimbot V2 On",
+        Content = "Aimware's Hoopz",
+        Duration = 1,
+        Image = 4483362458,
+        Actions = { -- Notification Buttons
+      Ignore = {
+         Name = "Okay",
+         Callback = function()
+         print("The user tapped Okay!")
+      end
+        }, 
+        },
+        })
+    end
+    
+    if Value == false then 
+            Rayfield:Notify({
+        Title = "AimbotV2 Off",
+        Content = "Aimware's Hoopz",
+        Duration = 1,
+        Image = 4483362458,
+        Actions = { -- Notification Buttons
+      Ignore = {
+         Name = "Okay",
+         Callback = function()
+         print("The user tapped Okay!")
+      end
+        }, 
+        },
+        })
+        end 
+
+    end,
+})
+
+
+
+
+
+
+
+local Toggle = MainTab:CreateToggle({
    Name = "Aimbot",
    CurrentValue = false,
    Flag = "AimbotFlag", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
@@ -294,6 +653,41 @@ end
 end
 end)
 end)
+
+    if Value == true then 
+            Rayfield:Notify({
+        Title = "Aimbot On",
+        Content = "Aimware's Hoopz",
+        Duration = 1,
+        Image = 4483362458,
+        Actions = { -- Notification Buttons
+      Ignore = {
+         Name = "Okay",
+         Callback = function()
+         print("The user tapped Okay!")
+      end
+        }, 
+        },
+        })
+    end 
+    
+    if Value == false then 
+            Rayfield:Notify({
+        Title = "Aimbot Off",
+        Content = "Aimware's Hoopz",
+        Duration = 1,
+        Image = 4483362458,
+        Actions = { -- Notification Buttons
+      Ignore = {
+         Name = "Okay",
+         Callback = function()
+         print("The user tapped Okay!")
+      end
+        }, 
+        },
+        })
+        end 
+    
    end,
 })
 
@@ -478,6 +872,92 @@ local Toggle = MainTab:CreateToggle({
 })
 
 
+local Toggle = MainTab:CreateToggle({
+   Name = "Ball Mag",
+   CurrentValue = false,
+   Flag = "BallMagFlag", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+       _G.mag = Value
+        _G.magRange = 25
+function getClosestBasketball()
+    local closestDistance = math.huge
+    local closestBasketball = nil
+    for i,v in pairs(game:GetService("Workspace"):GetChildren()) do
+        if v.Name == "Basketball" then
+            local distance = (game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position - v.Ball.Position).magnitude
+            if distance < closestDistance then
+                closestDistance = distance
+                closestBasketball = v.Ball
+            end
+        end
+    end
+    return closestBasketball
+end
+
+
+spawn(function()
+while _G.mag == true do
+wait()
+if (game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position - getClosestBasketball().Position).magnitude <= _G.magRange then
+wait()
+firetouchinterest(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, getClosestBasketball(), 0)
+wait(0.001)
+firetouchinterest(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, getClosestBasketball(), 1)
+if _G.mag == false then return end
+end
+end
+end)
+
+        if Value == true then 
+            Rayfield:Notify({
+        Title = "Mag Turned On",
+        Content = "Aimware's Hoopz",
+        Duration = 1,
+        Image = 4483362458,
+        Actions = { -- Notification Buttons
+      Ignore = {
+         Name = "Okay",
+         Callback = function()
+         print("The user tapped Okay!")
+      end
+        }, 
+        },
+        })
+        end 
+        
+        if Value == false then 
+            Rayfield:Notify({
+        Title = "Mag Turned Off",
+        Content = "Aimware's Hoopz",
+        Duration = 1,
+        Image = 4483362458,
+        Actions = { -- Notification Buttons
+      Ignore = {
+         Name = "Okay",
+         Callback = function()
+         print("The user tapped Okay!")
+      end
+        }, 
+        },
+        })
+        end 
+        
+   end,
+})
+
+local Slider = MainTab:CreateSlider({
+   Name = "Mag Range",
+   Range = {0, 25},
+   Increment = 1,
+   Suffix = "Mag Range",
+   CurrentValue = 0,
+   Flag = "MagRangeFlag", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+       _G.magRange = value
+   end,
+})
+
+
 
 local Toggle = MainTab:CreateToggle({
    Name = "Anti Travel",
@@ -650,7 +1130,7 @@ local Button = AnimationTab:CreateButton({
    Callback = function()
        loadstring(game:HttpGet('https://raw.githubusercontent.com/MainHackScripts/AimwareIntros/main/.lua'))()
        
-            Rayfield:Notify({
+        Rayfield:Notify({
         Title = "Executed",
         Content = "Aimware's Hoopz",
         Duration = 1,
@@ -798,4 +1278,4 @@ local Button = PlayerTab:CreateButton({
    Callback = function()
        game:GetService("Players").LocalPlayer.Character.Humanoid.Health = 0
    end,
-}) 
+})
